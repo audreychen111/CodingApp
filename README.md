@@ -30,11 +30,11 @@ Until we have a shared production database, your choice of username and password
 
 3. Frontend (in a second terminal):
 
-   ```bash
-   cd frontend
-   npm install
-   echo "NEXT_PUBLIC_API_URL=http://localhost:8000" > .env.local
-   npm run dev
-   ```
+```bash
+cd frontend
+npm install
+echo "NEXT_PUBLIC_API_URL=http://localhost:8000" > .env.local
+npm run dev
+```
 
 4. Open http://localhost:3000. If it says "Backend status: ok", you're set.
