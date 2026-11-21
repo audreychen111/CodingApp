@@ -15,11 +15,18 @@ class Skill(m.Model):
   course = m.ForeignKey(Course, on_delete=m.CASCADE)
 
 class UserSkill(m.Model):
-  class Meta:
-    constraints = [m.UniqueConstraint(fields=["user", "skill"], name="unique_user_skill")]
-  user = m.ForeignKey(settings.AUTH_USER_MODEL, on_delete=m.CASCADE)
-  skill = m.ForeignKey(Skill, on_delete=m.CASCADE)
+  class Meta: #goes inside the model class
+    constraints = [
+      m.UniqueConstraint(fields=["user", "skill"], name="unique_user_skill"),
+    ]
+  user = m.ForeignKey(settings.AUTH_USER_MODEL, on_delete= m.CASCADE)
+  skill= m.ForeignKey(Skill, on_delete= m.CASCADE)
+  # belief over skill levels 1-5, e.g. [0.05, 0.15, 0.5, 0.25, 0.05]; empty until first practice
+  belief = m.JSONField(default=list)
   level = m.FloatField(default=0.0)
+  answer_counts = m.PositiveIntegerField(default=0)
+  update_at = m.DateTimeField(auto_now=True)
+
 
 class Question(m.Model):
   class QuestionType(m.TextChoices):
@@ -29,7 +36,9 @@ class Question(m.Model):
   prompt = m.TextField()
   type = m.CharField(max_length=255, choices=QuestionType)
   skill = m.ForeignKey(Skill, on_delete=m.CASCADE)
-  difficulty = m.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+   # Elo rating: starts from difficulty set by the import, then updated after each answer
+  difficulty = m.FloatField(null=True, blank=True)
+  n_attempts = m.PositiveIntegerField(default=0)
 
 # can let an empty string represent no option (eg if we only want to give 2 options)
 class MultipleChoiceQuestion(m.Model):
@@ -54,3 +63,12 @@ class CodeTestCase(m.Model):
   input = m.TextField(blank=True)
   expected_output = m.TextField()
   is_hidden = m.BooleanField(default=True)
+
+class Attempt(m.Model):
+  user = m.ForeignKey(settings.AUTH_USER_MODEL, on_delete=m.CASCADE)
+  question = m.ForeignKey(Question, on_delete=m.CASCADE)
+  answer = m.TextField(blank=True)
+  correct = m.BooleanField()
+  expected = m.FloatField(null=True, blank=True)  # predicted P(correct) before answering
+  seconds_taken = m.PositiveIntegerField(null=True, blank=True)
+  created_at = m.DateTimeField(auto_now_add=True)

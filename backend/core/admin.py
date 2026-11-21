@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
     Course, Skill, UserSkill, Question,
-    MultipleChoiceQuestion, FillQuestion, CodeQuestion, CodeTestCase,
+    MultipleChoiceQuestion, FillQuestion, CodeQuestion, CodeTestCase, Attempt,
 )
 
 # Register your models here.
@@ -14,3 +14,4 @@ admin.site.register(MultipleChoiceQuestion)
 admin.site.register(FillQuestion)
 admin.site.register(CodeQuestion)
 admin.site.register(CodeTestCase)
+admin.site.register(Attempt)
